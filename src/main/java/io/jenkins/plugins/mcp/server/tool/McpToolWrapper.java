@@ -210,9 +210,11 @@ public class McpToolWrapper {
             ObjectNode parameterNode = SUBTYPE_SCHEMA_GENERATOR.generateSchema(String.class);
             parameterNode.put(
                     DESCRIPTION,
-                    "Field selection expression using the Jenkins Remote REST API tree syntax.\n"
-                            + "Allows limiting returned fields and nested objects (for example executable[number,url]) to reduce response size, especially for polling workflows.");
+                    "REQUIRED: Field selection expression to limit returned fields and reduce response size. "
+                            + "Uses Jenkins tree syntax. Example: \"name,url,lastBuild[number,result,url]\". "
+                            + "Nest with [] and separate fields with commas. Always specify only the fields you need.");
             properties.set("tree", parameterNode);
+            required.add("tree");
         }
 
         var requiredArray = schema.putArray("required");
