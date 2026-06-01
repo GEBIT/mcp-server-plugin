@@ -36,6 +36,15 @@
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <spotless.check.skip>false</spotless.check.skip>
     <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
+
+    <!-- GEBIT: versions to be used for gebit-build support -->
+    <version.build>3.14.1</version.build>
+    <version.tiles>2.8-gebit40</version.tiles>
+    <version.gebit-build-extension>2.0.0</version.gebit-build-extension>
+    <version.gebit-forked>1.0.8</version.gebit-forked>
+    <version.maven-enforcer-plugin>3.6.3</version.maven-enforcer-plugin>
+    <!-- Remove this and the pluginManagement declaration when upstream uses enforcer 3.6.3+ -->
+    <!-- GEBIT: end -->
   </properties>
 
   <dependencyManagement>
@@ -278,7 +287,31 @@
     </pluginRepository>
   </pluginRepositories>
   <build>
+    <!-- GEBIT: temporarily bump enforcer to 3.6.3 to avoid NPE with modelId due to tiles -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${version.maven-enforcer-plugin}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <!-- end GEBIT -->
     <plugins>
+      <!-- GEBIT: Tiles -->
+      <plugin>
+        <groupId>io.repaint.maven</groupId>
+        <artifactId>tiles-maven-plugin</artifactId>
+        <version>${version.tiles}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <tiles>
+            <tile>de.gebit.build.forked.tile:jenkins-plugin:${version.gebit-forked}</tile>
+          </tiles>
+        </configuration>
+      </plugin>
+      <!-- GEBIT: end -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -291,5 +324,13 @@
         </executions>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>de.gebit.build.maven</groupId>
+        <artifactId>gebit-build-extension</artifactId>
+        <version>${version.gebit-build-extension}</version>
+      </extension>
+    </extensions>
+    <!-- GEBIT: end -->
   </build>
 </project>
