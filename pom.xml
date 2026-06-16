@@ -10,7 +10,7 @@
   </parent>
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>mcp-server</artifactId>
-  <version>${revision}.${changelist}</version>
+  <version>0.177.v629fdb_2557fe-gebit1</version>
   <packaging>hpi</packaging>
 
   <name>MCP Server Plugin</name>
