@@ -16,25 +16,30 @@ public class OriginHeaderValidationTest {
     @McpClientTest
     @SetSystemProperty(key = "io.jenkins.plugins.mcp.server.Endpoint.requireOriginHeader", value = "true")
     void testMcpMandatoryOriginHeader(JenkinsRule jenkins, JenkinsMcpClientBuilder jenkinsMcpClientBuilder) {
-        assertThrows(RuntimeException.class, () -> jenkinsMcpClientBuilder
-                .jenkins(jenkins)
-                // as it fail because of 403 we set a short timeout
-                // to avoid waiting the default 300 seconds
-                .requestTimeoutSeconds(10)
-                .build());
+        assertThrows(
+                RuntimeException.class,
+                () -> jenkinsMcpClientBuilder
+                        .jenkins(jenkins)
+                        // as it fail because of 403 we set a short timeout
+                        // to avoid waiting the default 300 seconds
+                        .requestTimeoutSeconds(10)
+                        .build());
     }
 
     @McpClientTest
     @SetSystemProperty(key = "io.jenkins.plugins.mcp.server.Endpoint.requireOriginHeader", value = "true")
     @SetSystemProperty(key = "io.jenkins.plugins.mcp.server.Endpoint.requireOriginMatch", value = "true")
     void testMcpMandatoryNonValidOriginHeader(JenkinsRule jenkins, JenkinsMcpClientBuilder jenkinsMcpClientBuilder) {
-        assertThrows(RuntimeException.class, () -> jenkinsMcpClientBuilder
-                .jenkins(jenkins)
-                // as it fail because of 403 we set a short timeout
-                // to avoid waiting the default 300 seconds
-                .requestTimeoutSeconds(10)
-                .requestCustomizer(requestBuilder -> requestBuilder.header("Origin", "http://foo-bar-beer.com"))
-                .build());
+        assertThrows(
+                RuntimeException.class,
+                () -> jenkinsMcpClientBuilder
+                        .jenkins(jenkins)
+                        // as it fail because of 403 we set a short timeout
+                        // to avoid waiting the default 300 seconds
+                        .requestTimeoutSeconds(10)
+                        .requestCustomizer((builder, method, endpoint, body, context) ->
+                                builder.header("Origin", "http://foo-bar-beer.com"))
+                        .build());
     }
 
     @McpClientTest
@@ -48,7 +53,7 @@ public class OriginHeaderValidationTest {
                 // as it fail because of 403 we set a short timeout
                 // to avoid waiting the default 300 seconds
                 .requestTimeoutSeconds(10)
-                .requestCustomizer(requestBuilder -> requestBuilder.header("Origin", jenkinsUrl))
+                .requestCustomizer((builder, method, endpoint, body, context) -> builder.header("Origin", jenkinsUrl))
                 .build()) {
             var tools = client.listTools().tools();
             Assertions.assertThat(tools).isNotEmpty();
